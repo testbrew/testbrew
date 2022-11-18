@@ -5,7 +5,7 @@ export default function GridSection() {
   return (
     <section className=' w-full border-y border-slate-700 bg-slate-900'>
       <div className='mx-auto flex max-w-[1440px] flex-col items-center justify-start gap-8 pb-24 pt-16'>
-        <img src='editor-screenshot.png' className='w-10/12' />
+        <img src='imgs/editor-screenshot.png' className='w-10/12' />
         <h2
           className='gradient-text my-8 max-w-[700px] pb-2 text-center text-5xl font-bold leading-normal'
           style={{}}>
