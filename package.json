@@ -21,7 +21,7 @@
     "prettier:check": "prettier . --check",
     "prettier:fix": "prettier --write \"**/*.js\"",
     "prettify": "npm run prettier:fix",
-    "test": "jest"
+    "test": "jest testFiles"
   },
   "author": "Fullstack Academy of Code",
   "license": "MIT",
