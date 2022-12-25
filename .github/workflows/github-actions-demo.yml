@@ -11,5 +11,5 @@ jobs:
         node-version: [18x]
 
     steps:
-      - uses: actions/checkout
+      - uses: actions/checkout@v3
 
