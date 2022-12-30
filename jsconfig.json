@@ -1,0 +1,9 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "paths": {
+      "#SVG": ["client/components/SVG_Icons.js"],
+      "#store": ["./client/store"]
+    }
+  }
+}

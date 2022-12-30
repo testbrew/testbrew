@@ -97,6 +97,7 @@
   },
   "homepage": "https://github.com/Fraih001/testbrew#readme",
   "imports": {
+    "#SVG": "./client/components/SVG_Icons.js",
     "#store": "./client/store"
   }
 }
