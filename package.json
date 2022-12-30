@@ -95,5 +95,8 @@
   "bugs": {
     "url": "https://github.com/Fraih001/testbrew/issues"
   },
-  "homepage": "https://github.com/Fraih001/testbrew#readme"
+  "homepage": "https://github.com/Fraih001/testbrew#readme",
+  "imports": {
+    "#store": "./client/store"
+  }
 }
