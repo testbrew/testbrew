@@ -13,7 +13,6 @@ const Overlay = () => {
     </div>
   );
 };
-
 const styleOnCurrentPrompt = (currentPromptNum, promptNum) => {
   const isCurrentPrompt = currentPromptNum === promptNum;
   return isCurrentPrompt && 'bg-lime-400 text-slate-900 pointer-events-none';
