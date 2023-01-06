@@ -77,7 +77,7 @@ const Navbar = ({ handleClick, isLoggedIn }) => {
         }>
         <nav className='flex justify-between p-4'>
           <Link className='self-center' to='/'>
-            <img src='/test-brew-logo.svg' className='h-7' />
+            <img src='icons/test-brew-logo.svg' className='h-7' />
           </Link>
           {isLoggedIn ? <LoggedInLinks /> : <LoginButtons />}
         </nav>
