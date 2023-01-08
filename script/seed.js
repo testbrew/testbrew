@@ -208,9 +208,7 @@ Please use one of the matchers above to complete the following exercise:
       `,
       jsCode: `
       function notOverTen(num){
-        if (num <= 10) {
-          return true
-        }
+        if (num <= 10) return num
       };`,
       templateTest: `describe('notOverTen function', () => {
         test('check if value passed exceeds 10', () => {
@@ -226,7 +224,7 @@ Please use one of the matchers above to complete the following exercise:
       `,
     }),
     TestingPrompt.create({
-      strikeMarkRanges: [{ start: 98, end: 111 }],
+      strikeMarkRanges: [{ start: 106, end: 119 }],
       readOnlyRanges: [
         { from: 1, to: 5 },
         { from: 7, to: 14 },
@@ -255,14 +253,15 @@ describe('my lunch, () => {
       `,
       jsCode: `
       const weatherOutside = {
-        isCold = true;
-        isRaining = false;
-    }`,
-      templateTest: `const weatherOutside = {
         isCold: true,
         isRaining: false,
     }
-    
+    `,
+      templateTest: `// const weatherOutside = {
+        // isCold: true,
+        // isRaining: false,
+    // }
+
     describe( ADD CODE HERE , () => {
         test('is cold outside', () => {
         expect( weatherOutside.isCold ).toBeTruthy();
@@ -307,15 +306,14 @@ In the exercise below, fill in the test method.
       `,
       jsCode: `
       function shoppingList(){
-        let shoppingList = [apples, oranges, pears];
+        let shoppingList = ['apples', 'oranges', 'pears'];
         return shoppingList
       }`,
       templateTest: `test( ADD CODE HERE, () => {
         let apples;
-        expect(shoppingList()).toContain(apples);
-        expect(new Set(shoppingList())).toContain(apples);
+        expect(shoppingList()).toContain('apples');
+        expect(new Set(shoppingList())).toContain('apples');
       });      
-           
       `,
       solution: ` test( 'Apples on my shoppingList', () => {
         let apples;
@@ -421,7 +419,7 @@ Based on the prompt below, please fill in the describe, test, expect and toBe fu
                         for(let i = num; i > 0; i-- ){
                             woofStr.push('woof')
                         }
-                        return woofStr.join(' ')
+                        return woofStr.join(',')
                     }
                 }
         `,
