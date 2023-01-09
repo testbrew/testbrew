@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
-import { NextArrowIcon, PreviousArrowIcon } from '../SVG_Icons';
-import { fetchPrompts } from '../../store/prompts';
+import { NextArrowIcon, PreviousArrowIcon } from '#SVG';
+import { fetchPrompts } from '#store';
 import { Link } from 'react-router-dom';
 import TestExercise from './TestExercise';
 
@@ -13,7 +13,6 @@ const Overlay = () => {
     </div>
   );
 };
-
 const styleOnCurrentPrompt = (currentPromptNum, promptNum) => {
   const isCurrentPrompt = currentPromptNum === promptNum;
   return isCurrentPrompt && 'bg-lime-400 text-slate-900 pointer-events-none';
