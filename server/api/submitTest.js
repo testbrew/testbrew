@@ -16,10 +16,7 @@ router.post('/', async (req, res) => {
 
   const jsCode = findJsCode.dataValues.jsCode;
 
-  // TODO: rm this boolean check after deprecated tests are removed
-  const hasDeprecatedTestPassed = req.body.passedTest === 'true';
-
-  if (req.body.hasTestPassed === true || hasDeprecatedTestPassed) {
+  if (req.body.hasTestPassed === true) {
     const testFileName = uuidv4() + '.test.js';
 
     const filePath = `./testFiles/${testFileName}`;

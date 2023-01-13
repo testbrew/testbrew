@@ -5,7 +5,6 @@ import { Login, Signup } from './components/AuthForm';
 import Home from './components/Home';
 
 import { me } from './store';
-import DeprecatedPaginatedTests from './components/Tests/DeprecatedPaginatedTests';
 import PaginatedTests from './components/Tests/PaginatedTests';
 
 /**
@@ -26,16 +25,14 @@ class Routes extends Component {
             <Switch>
               <Route exact path='/login' component={Login} />
               <Route exact path='/signup' component={Signup} />
+              <Route exact path='/' component={Home} />
+              <Route exact path='/jest/:promptNum' component={PaginatedTests} />
+              <Redirect exact from='/jest' to='/jest/1' />
             </Switch>
           )}
           <Route exact path='/' component={Home} />
           <Route exact path='/jest/:promptNum' component={PaginatedTests} />
           <Redirect exact from='/jest' to='/jest/1' />
-          <Route
-            exact
-            path='/deprecatedJest'
-            component={DeprecatedPaginatedTests}
-          />
         </Switch>
       </div>
     );
