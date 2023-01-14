@@ -2,6 +2,7 @@ import React, { useEffect } from 'react';
 import { connect } from 'react-redux';
 import { NextArrowIcon, PreviousArrowIcon } from '../SVG_Icons';
 import { fetchPrompts } from '../../store/prompts';
+import { fetchSavedPrompts } from '../../store';
 import { Link } from 'react-router-dom';
 import TestExercise from './TestExercise';
 
@@ -61,10 +62,12 @@ const PaginationRow = ({ currentPromptNum, prompts }) => {
 
 const PaginatedPrompts = (props) => {
   const { currentPrompt, currentPromptNum, fetchPrompts, prompts } = props;
-
+  const promptId = props.currentPrompt.id;
+  const userId = props.auth.id;
   useEffect(() => {
     fetchPrompts();
-  }, []);
+    if (userId && promptId) props.fetchSavedPrompts(userId, promptId);
+  }, [promptId]);
 
   return (
     <div className='top-0 mt-[-74px] flex h-screen max-h-screen flex-col justify-between overflow-hidden pt-[70px]'>
@@ -79,21 +82,25 @@ const PaginatedPrompts = (props) => {
 };
 
 const mapStateToProps = (state, props) => {
+  // console.log(state)
+  const { prompts, auth } = state;
   const { match } = props;
   const currentPromptNum = 1 * match.params.promptNum;
-  const { prompts } = state;
   const promptIndex = currentPromptNum - 1;
   const currentPrompt = prompts[promptIndex] || {};
   return {
     currentPrompt,
     currentPromptNum,
     prompts,
+    auth,
   };
 };
 
 const mapDispatchToProps = (dispatch) => {
   return {
     fetchPrompts: () => dispatch(fetchPrompts()),
+    fetchSavedPrompts: (userId, promptId) =>
+      dispatch(fetchSavedPrompts(userId, promptId)),
   };
 };
 

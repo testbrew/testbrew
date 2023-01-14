@@ -80,6 +80,8 @@ export const Editor = (props) => {
   const userId = props.auth.id;
   const promptId = props.currentPrompt.id;
   const { currentPrompt } = props;
+  // console.log(promptId)
+
   const {
     jsCode,
     narrative,

@@ -20,7 +20,7 @@ router.post('/', async (req, res) => {
         found.update({
           userSubmission: req.body.code,
         });
-        console.log('UPDATED:', found);
+        console.log('UPDATEDDDDDDDD:', found);
       } else {
         const newSub = await UserSubmissions.create({
           userId: req.body.userId,

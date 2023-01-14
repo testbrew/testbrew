@@ -2,7 +2,14 @@ const path = require('path');
 const express = require('express');
 const morgan = require('morgan');
 const app = express();
+var bodyParser = require('body-parser');
 module.exports = app;
+
+// parse application/x-www-form-urlencoded
+app.use(bodyParser.urlencoded({ extended: false }));
+
+// parse application/json
+app.use(bodyParser.json());
 
 // logging middleware
 app.use(morgan('dev'));
