@@ -77,6 +77,8 @@ export const Editor = (props) => {
   const [code, setCode] = useState('');
   const [hasTestPassed, setHasTestPassed] = useState(false);
   const [response, setResponse] = useState(defaultResponse);
+  const userId = props.auth.id;
+  const promptId = props.currentPrompt.id;
   const { currentPrompt } = props;
   const {
     jsCode,
@@ -203,6 +205,8 @@ export const Editor = (props) => {
   const fetchData = () => {
     axios
       .post('/api/evaluateTest', {
+        userId,
+        promptId,
         code,
         orderNum,
       })
