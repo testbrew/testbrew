@@ -73,7 +73,7 @@ function myCompletions(context) {
 const defaultResponse = 'See your results here!';
 
 export const Editor = (props) => {
-  const { currentPrompt, savedPrompts } = props;
+  const { currentPrompt, savedPrompts, auth } = props;
   const userId = props.auth.id;
   const promptId = props.currentPrompt.id;
 
@@ -175,9 +175,10 @@ export const Editor = (props) => {
       provide: (f) => EditorView.decorations.from(f),
     });
     const state = EditorState.create({
-      doc: savedPrompts.data?.userSubmission
-        ? savedPrompts.data.userSubmission
-        : templateTest,
+      doc:
+        savedPrompts.data?.userSubmission && auth.id
+          ? savedPrompts.data.userSubmission
+          : templateTest,
 
       extensions: [
         basicSetup,
@@ -217,21 +218,41 @@ export const Editor = (props) => {
   }, [templateTest, savedPrompts]);
 
   const fetchData = () => {
-    axios
-      .post('/api/evaluateTest', {
-        userId,
-        promptId,
-        code,
-        orderNum,
-      })
-      .then((res) => {
-        setResponse(res.data);
-        if (
-          res.data.includes('That looks right! Go ahead and submit your test!')
-        ) {
-          setHasTestPassed(true);
-        }
-      });
+    if (userId && promptId) {
+      axios
+        .post('/api/evaluateTest', {
+          userId,
+          promptId,
+          code,
+          orderNum,
+        })
+        .then((res) => {
+          setResponse(res.data);
+          if (
+            res.data.includes(
+              'That looks right! Go ahead and submit your test!',
+            )
+          ) {
+            setHasTestPassed(true);
+          }
+        });
+    } else {
+      axios
+        .post('/api/evaluateTest', {
+          code,
+          orderNum,
+        })
+        .then((res) => {
+          setResponse(res.data);
+          if (
+            res.data.includes(
+              'That looks right! Go ahead and submit your test!',
+            )
+          ) {
+            setHasTestPassed(true);
+          }
+        });
+    }
   };
 
   const onSubmit = () => {
