@@ -16,7 +16,7 @@ export const _setSavedPrompts = (savedPrompts) => {
 
 export const fetchSavedPrompts = (userId, promptId) => {
   return async (dispatch) => {
-    const savedPrompts = await axios.post(
+    const savedPrompts = await axios.get(
       `/api/savedPrompts/${userId}/${promptId}`,
     );
     dispatch(_setSavedPrompts(savedPrompts));

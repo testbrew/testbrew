@@ -4,7 +4,7 @@ const {
 } = require('../db');
 module.exports = router;
 
-router.post('/:userId/:promptId', async (req, res, next) => {
+router.get('/:userId/:promptId', async (req, res, next) => {
   try {
     const savedPrompt = await UserSubmissions.findOne({
       where: {
