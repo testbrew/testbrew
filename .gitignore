@@ -7,3 +7,6 @@ yarn-error.log
 submitted.js
 testFiles/*
 !testFiles/.gitkeep
+/test-results/
+/playwright-report/
+/playwright/.cache/
