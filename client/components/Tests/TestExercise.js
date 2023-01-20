@@ -86,6 +86,7 @@ export const Editor = (props) => {
   const [code, setCode] = useState('');
   const [hasTestPassed, setHasTestPassed] = useState(false);
   const [response, setResponse] = useState(defaultResponse);
+  let button;
 
   const {
     jsCode,
@@ -280,6 +281,24 @@ export const Editor = (props) => {
   const [isSolutionShown, setIsSolutionShown] = React.useState(false);
   const [isCodeShown, setIsCodeShown] = React.useState(false);
 
+  if (!hasTestPassed) {
+    button = (
+      <button
+        className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
+        onClick={onSubmit}>
+        Evaluate Test
+      </button>
+    );
+  } else {
+    button = (
+      <button
+        className='filled-button self-center rounded-lg bg-lime-400 px-4 py-2  text-sm text-slate-900 transition-shadow 2xl:text-base'
+        onClick={runTest}>
+        Submit Test
+      </button>
+    );
+  }
+
   return (
     <div className='flex h-[93vh] max-h-[93vh] w-full grow flex-col overflow-hidden bg-slate-900'>
       <SolutionModal
@@ -337,16 +356,8 @@ export const Editor = (props) => {
           <div
             id='button-container'
             className='flex gap-6 border-t border-slate-700 py-4 px-6'>
-            <button
-              className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
-              onClick={onSubmit}>
-              Evaluate Test
-            </button>
-            <button
-              className='filled-button self-center rounded-lg bg-lime-400 px-4 py-2  text-sm text-slate-900 transition-shadow 2xl:text-base'
-              onClick={runTest}>
-              Submit Test
-            </button>
+            {button}
+
             <button
               className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
               onClick={() => setIsSolutionShown(true)}>
