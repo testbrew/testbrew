@@ -71,7 +71,7 @@ const PaginatedPrompts = (props) => {
       <Overlay />
       <TestExercise
         currentPrompt={currentPrompt}
-        currentPromptNum={currentPromptNum}
+        // currentPromptNum={currentPromptNum}
       />
       <PaginationRow currentPromptNum={currentPromptNum} prompts={prompts} />
     </div>
