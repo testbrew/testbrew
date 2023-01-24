@@ -86,6 +86,8 @@ export const Editor = (props) => {
   const [code, setCode] = useState('');
   const [hasTestPassed, setHasTestPassed] = useState(false);
   const [response, setResponse] = useState(defaultResponse);
+  const [reset, setReset] = useState(false);
+  console.log(reset);
   let button;
 
   const {
@@ -146,6 +148,11 @@ export const Editor = (props) => {
 
   // Template Test editor
 
+  let initialCode =
+    savedPrompts.data?.userSubmission && auth.id
+      ? savedPrompts.data.userSubmission
+      : templateTest;
+
   const onUpdate = EditorView.updateListener.of((v) => {
     setCode(v.state.doc.toString());
   });
@@ -175,12 +182,9 @@ export const Editor = (props) => {
       },
       provide: (f) => EditorView.decorations.from(f),
     });
-    const state = EditorState.create({
-      doc:
-        savedPrompts.data?.userSubmission && auth.id
-          ? savedPrompts.data.userSubmission
-          : templateTest,
 
+    let state = EditorState.create({
+      doc: !reset ? initialCode : templateTest,
       extensions: [
         basicSetup,
         EditorState.tabSize.of(16),
@@ -194,8 +198,12 @@ export const Editor = (props) => {
         autocompletion({ override: [myCompletions] }),
       ],
     });
-
     const view = new EditorView({ state, parent: editorRef.current });
+
+    if (reset) {
+      setReset(false);
+    }
+
     let strikeMark;
 
     savedPrompts.data?.userSubmission
@@ -216,7 +224,7 @@ export const Editor = (props) => {
     return () => {
       view.destroy();
     };
-  }, [templateTest, savedPrompts]);
+  }, [initialCode, reset]);
 
   const fetchData = () => {
     if (userId && promptId) {
@@ -236,10 +244,15 @@ export const Editor = (props) => {
           ) {
             setHasTestPassed(true);
           }
+        })
+        .catch((err) => {
+          console.log(err.message);
         });
     } else {
       axios
         .post('/api/evaluateTest', {
+          userId,
+          promptId,
           code,
           orderNum,
         })
@@ -252,6 +265,23 @@ export const Editor = (props) => {
           ) {
             setHasTestPassed(true);
           }
+        });
+    }
+  };
+
+  const onReset = () => {
+    setReset(true);
+    if (userId && promptId) {
+      savedPrompts.data.userSubmission = templateTest;
+      axios
+        .post('/api/evaluateTest', {
+          userId,
+          promptId,
+          code: templateTest,
+          orderNum,
+        })
+        .catch((err) => {
+          console.log(err.message);
         });
     }
   };
@@ -357,6 +387,12 @@ export const Editor = (props) => {
             id='button-container'
             className='flex gap-6 border-t border-slate-700 py-4 px-6'>
             {button}
+
+            <button
+              className='filled-button self-center rounded-lg bg-lime-400 px-4 py-2  text-sm text-slate-900 transition-shadow 2xl:text-base'
+              onClick={onReset}>
+              Reset Code
+            </button>
 
             <button
               className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
