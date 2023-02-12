@@ -234,6 +234,7 @@ export const Editor = (props) => {
       })
       .then((res) => {
         setHasTestPassed(false);
+        console.log(res.data);
         setResponse(res.data);
       });
   };
@@ -332,7 +333,9 @@ export const Editor = (props) => {
         </div>
 
         <div className='scrollbar grow overflow-y-auto bg-[#090e1a] px-8 py-4 font-mono text-slate-200'>
-          {response}
+          {response.split('\n').map((i, key) => {
+            return <div key={key}>{i}</div>;
+          })}
         </div>
       </div>
     </div>

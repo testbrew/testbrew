@@ -25,6 +25,7 @@ router.post('/', async (req, res) => {
     try {
       fs.writeFileSync(filePath, jsCodeWithUserCode);
       const { stderr } = await exec(`npm test ${testFileName}`);
+      // console.log(JSON.stringify(stderr));
       res.json(stderr.toString());
     } catch (err) {
       res.send(err.toString());
