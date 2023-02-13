@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { fetchSavedPrompts } from '../../store';
 
 import { Decoration, EditorView, keymap } from '@codemirror/view';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
@@ -72,12 +73,21 @@ function myCompletions(context) {
 const defaultResponse = 'See your results here!';
 
 export const Editor = (props) => {
+  const { currentPrompt, savedPrompts, auth } = props;
+  const userId = props.auth.id;
+  const promptId = props.currentPrompt.id;
+
+  useEffect(() => {
+    if (userId && promptId) props.fetchSavedPrompts(userId, promptId);
+  }, [userId, promptId]);
+
   const editorRef = useRef();
   const instrEditorRef = useRef();
   const [code, setCode] = useState('');
   const [hasTestPassed, setHasTestPassed] = useState(false);
   const [response, setResponse] = useState(defaultResponse);
-  const { currentPrompt } = props;
+  let button;
+
   const {
     jsCode,
     narrative,
@@ -165,9 +175,11 @@ export const Editor = (props) => {
       },
       provide: (f) => EditorView.decorations.from(f),
     });
-
     const state = EditorState.create({
-      doc: templateTest,
+      doc:
+        savedPrompts.data?.userSubmission && auth.id
+          ? savedPrompts.data.userSubmission
+          : templateTest,
 
       extensions: [
         basicSetup,
@@ -184,9 +196,15 @@ export const Editor = (props) => {
     });
 
     const view = new EditorView({ state, parent: editorRef.current });
-    const strikeMark = Decoration.mark({
-      attributes: { style: 'background: #3730a3' },
-    });
+    let strikeMark;
+
+    savedPrompts.data?.userSubmission
+      ? (strikeMark = Decoration.mark({
+          attributes: {},
+        }))
+      : (strikeMark = Decoration.mark({
+          attributes: { style: 'background: #3730a3' },
+        }));
 
     const strikeMarkArray = strikeMarkRanges?.map((range) => {
       return strikeMark.range(range.start, range.end);
@@ -198,22 +216,44 @@ export const Editor = (props) => {
     return () => {
       view.destroy();
     };
-  }, [templateTest]);
+  }, [templateTest, savedPrompts]);
 
   const fetchData = () => {
-    axios
-      .post('/api/evaluateTest', {
-        code,
-        orderNum,
-      })
-      .then((res) => {
-        setResponse(res.data);
-        if (
-          res.data.includes('That looks right! Go ahead and submit your test!')
-        ) {
-          setHasTestPassed(true);
-        }
-      });
+    if (userId && promptId) {
+      axios
+        .post('/api/evaluateTest', {
+          userId,
+          promptId,
+          code,
+          orderNum,
+        })
+        .then((res) => {
+          setResponse(res.data);
+          if (
+            res.data.includes(
+              'That looks right! Go ahead and submit your test!',
+            )
+          ) {
+            setHasTestPassed(true);
+          }
+        });
+    } else {
+      axios
+        .post('/api/evaluateTest', {
+          code,
+          orderNum,
+        })
+        .then((res) => {
+          setResponse(res.data);
+          if (
+            res.data.includes(
+              'That looks right! Go ahead and submit your test!',
+            )
+          ) {
+            setHasTestPassed(true);
+          }
+        });
+    }
   };
 
   const onSubmit = () => {
@@ -241,6 +281,24 @@ export const Editor = (props) => {
 
   const [isSolutionShown, setIsSolutionShown] = React.useState(false);
   const [isCodeShown, setIsCodeShown] = React.useState(false);
+
+  if (!hasTestPassed) {
+    button = (
+      <button
+        className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
+        onClick={onSubmit}>
+        Evaluate Test
+      </button>
+    );
+  } else {
+    button = (
+      <button
+        className='filled-button self-center rounded-lg bg-lime-400 px-4 py-2  text-sm text-slate-900 transition-shadow 2xl:text-base'
+        onClick={runTest}>
+        Submit Test
+      </button>
+    );
+  }
 
   return (
     <div className='flex h-[93vh] max-h-[93vh] w-full grow flex-col overflow-hidden bg-slate-900'>
@@ -299,16 +357,8 @@ export const Editor = (props) => {
           <div
             id='button-container'
             className='flex gap-6 border-t border-slate-700 py-4 px-6'>
-            <button
-              className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
-              onClick={onSubmit}>
-              Evaluate Test
-            </button>
-            <button
-              className='filled-button self-center rounded-lg bg-lime-400 px-4 py-2  text-sm text-slate-900 transition-shadow 2xl:text-base'
-              onClick={runTest}>
-              Submit Test
-            </button>
+            {button}
+
             <button
               className='self-center rounded-lg border border-lime-400 px-4 py-2 text-sm text-lime-400 transition-all hover:bg-lime-400/10 2xl:text-base'
               onClick={() => setIsSolutionShown(true)}>
@@ -346,4 +396,11 @@ const mapStateToProps = (props) => {
   return props;
 };
 
-export default connect(mapStateToProps)(Editor);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchSavedPrompts: (userId, promptId) =>
+      dispatch(fetchSavedPrompts(userId, promptId)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Editor);
