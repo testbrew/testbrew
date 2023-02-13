@@ -3,8 +3,9 @@ import { createStore, combineReducers, applyMiddleware } from 'redux';
 import thunkMiddleware from 'redux-thunk';
 import auth from './auth';
 import prompts from './prompts';
+import savedPrompts from './savedPrompts';
 
-const reducer = combineReducers({ auth, prompts });
+const reducer = combineReducers({ auth, prompts, savedPrompts });
 const middleware = applyMiddleware(
   thunkMiddleware,
   // createLogger({ collapsed: true }),
@@ -14,3 +15,4 @@ const store = createStore(reducer, middleware);
 export default store;
 export * from './auth';
 export * from './prompts';
+export * from './savedPrompts';

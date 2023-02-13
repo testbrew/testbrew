@@ -79,9 +79,10 @@ const PaginatedPrompts = (props) => {
 };
 
 const mapStateToProps = (state, props) => {
+  // console.log(state)
+  const { prompts } = state;
   const { match } = props;
   const currentPromptNum = 1 * match.params.promptNum;
-  const { prompts } = state;
   const promptIndex = currentPromptNum - 1;
   const currentPrompt = prompts[promptIndex] || {};
   return {

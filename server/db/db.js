@@ -4,7 +4,7 @@ const pkg = require('../../package.json');
 const databaseName = pkg.name;
 
 const config = {
-  logging: false,
+  // logging: false,
 };
 
 if (process.env.LOGGING === 'true') {

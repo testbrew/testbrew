@@ -1,6 +1,7 @@
 import React, { useRef, useEffect, useState } from 'react';
 import axios from 'axios';
 import { connect } from 'react-redux';
+import { fetchSavedPrompts } from '../../store';
 
 import { Decoration, EditorView, keymap } from '@codemirror/view';
 import { EditorState, StateEffect, StateField } from '@codemirror/state';
@@ -72,12 +73,20 @@ function myCompletions(context) {
 const defaultResponse = 'See your results here!';
 
 export const Editor = (props) => {
+  const { currentPrompt, savedPrompts, auth } = props;
+  const userId = props.auth.id;
+  const promptId = props.currentPrompt.id;
+
+  useEffect(() => {
+    if (userId && promptId) props.fetchSavedPrompts(userId, promptId);
+  }, [userId, promptId]);
+
   const editorRef = useRef();
   const instrEditorRef = useRef();
   const [code, setCode] = useState('');
   const [hasTestPassed, setHasTestPassed] = useState(false);
   const [response, setResponse] = useState(defaultResponse);
-  const { currentPrompt } = props;
+
   const {
     jsCode,
     narrative,
@@ -165,9 +174,11 @@ export const Editor = (props) => {
       },
       provide: (f) => EditorView.decorations.from(f),
     });
-
     const state = EditorState.create({
-      doc: templateTest,
+      doc:
+        savedPrompts.data?.userSubmission && auth.id
+          ? savedPrompts.data.userSubmission
+          : templateTest,
 
       extensions: [
         basicSetup,
@@ -184,9 +195,15 @@ export const Editor = (props) => {
     });
 
     const view = new EditorView({ state, parent: editorRef.current });
-    const strikeMark = Decoration.mark({
-      attributes: { style: 'background: #3730a3' },
-    });
+    let strikeMark;
+
+    savedPrompts.data?.userSubmission
+      ? (strikeMark = Decoration.mark({
+          attributes: {},
+        }))
+      : (strikeMark = Decoration.mark({
+          attributes: { style: 'background: #3730a3' },
+        }));
 
     const strikeMarkArray = strikeMarkRanges?.map((range) => {
       return strikeMark.range(range.start, range.end);
@@ -198,22 +215,44 @@ export const Editor = (props) => {
     return () => {
       view.destroy();
     };
-  }, [templateTest]);
+  }, [templateTest, savedPrompts]);
 
   const fetchData = () => {
-    axios
-      .post('/api/evaluateTest', {
-        code,
-        orderNum,
-      })
-      .then((res) => {
-        setResponse(res.data);
-        if (
-          res.data.includes('That looks right! Go ahead and submit your test!')
-        ) {
-          setHasTestPassed(true);
-        }
-      });
+    if (userId && promptId) {
+      axios
+        .post('/api/evaluateTest', {
+          userId,
+          promptId,
+          code,
+          orderNum,
+        })
+        .then((res) => {
+          setResponse(res.data);
+          if (
+            res.data.includes(
+              'That looks right! Go ahead and submit your test!',
+            )
+          ) {
+            setHasTestPassed(true);
+          }
+        });
+    } else {
+      axios
+        .post('/api/evaluateTest', {
+          code,
+          orderNum,
+        })
+        .then((res) => {
+          setResponse(res.data);
+          if (
+            res.data.includes(
+              'That looks right! Go ahead and submit your test!',
+            )
+          ) {
+            setHasTestPassed(true);
+          }
+        });
+    }
   };
 
   const onSubmit = () => {
@@ -346,4 +385,11 @@ const mapStateToProps = (props) => {
   return props;
 };
 
-export default connect(mapStateToProps)(Editor);
+const mapDispatchToProps = (dispatch) => {
+  return {
+    fetchSavedPrompts: (userId, promptId) =>
+      dispatch(fetchSavedPrompts(userId, promptId)),
+  };
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Editor);
