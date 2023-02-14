@@ -95,5 +95,9 @@
   "bugs": {
     "url": "https://github.com/Fraih001/testbrew/issues"
   },
-  "homepage": "https://github.com/Fraih001/testbrew#readme"
+  "homepage": "https://github.com/Fraih001/testbrew#readme",
+  "imports": {
+    "#SVG": "./client/components/SVG_Icons.js",
+    "#store": "./client/store"
+  }
 }
